@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de Administración — Clínica Belleza</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --color-bg:        #faf8f5;
+      --color-surface:   #ffffff;
+      --color-border:    #e8e0d6;
+      --color-accent:    #8b6f47;
+      --color-accent-lt: #f2ebe0;
+      --color-danger:    #a33b3b;
+      --color-danger-lt: #fdf0f0;
+      --color-success:   #2e6e4e;
+      --color-success-lt:#edf7f2;
+      --color-text:      #1a1714;
+      --color-muted:     #6b6560;
+      --font-display:    'Cormorant Garamond', Georgia, serif;
+      --font-body:       'Inter', system-ui, sans-serif;
+      --radius-md:       12px;
+      --radius-lg:       20px;
+      --shadow-card:     0 1px 4px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body);
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100svh;
+    }
+    :focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 3px;
+    }
+
+    /* HEADER */
+    .site-header {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .site-header__logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--color-accent);
+    }
+    .site-header__badge {
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      background: var(--color-accent-lt);
+      color: var(--color-accent);
+      padding: .25rem .75rem;
+      border-radius: 99px;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .admin-email {
+      font-size: .8125rem;
+      color: var(--color-muted);
+    }
+
+    /* LAYOUT */
+    .main-content {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1.5rem 3rem;
+    }
+
+    /* STATS */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      box-shadow: var(--shadow-card);
+    }
+    .stat-card__numero {
+      font-family: var(--font-display);
+      font-size: 2.25rem;
+      font-weight: 600;
+      color: var(--color-accent);
+      line-height: 1;
+    }
+    .stat-card__label {
+      font-size: .8125rem;
+      color: var(--color-muted);
+      margin-top: .375rem;
+    }
+
+    /* TABLA */
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-card);
+    }
+    .card__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: .75rem;
+    }
+    .card__title {
+      font-family: var(--font-display);
+      font-size: 1.375rem;
+      font-weight: 600;
+      color: var(--color-accent);
+    }
+
+    /* FILTRO */
+    .filtro-group {
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+    }
+    .filtro-btn {
+      padding: .375rem .875rem;
+      border: 1.5px solid var(--color-border);
+      border-radius: 99px;
+      background: transparent;
+      font-size: .8125rem;
+      font-family: var(--font-body);
+      cursor: pointer;
+      color: var(--color-muted);
+      transition: all 150ms ease;
+    }
+    .filtro-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+    .filtro-btn.activo {
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      color: white;
+    }
+
+    /* TABLA RESERVAS */
+    .tabla-wrapper { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .9rem;
+    }
+    thead tr {
+      border-bottom: 2px solid var(--color-border);
+    }
+    th {
+      text-align: left;
+      padding: .625rem .875rem;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+    }
+    td {
+      padding: .875rem;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--color-bg); }
+
+    .badge-servicio {
+      display: inline-block;
+      padding: .25rem .625rem;
+      background: var(--color-accent-lt);
+      color: var(--color-accent);
+      border-radius: 99px;
+      font-size: .8rem;
+      font-weight: 500;
+    }
+    .btn-borrar-admin {
+      padding: .375rem .75rem;
+      background: var(--color-danger-lt);
+      color: var(--color-danger);
+      border: 1px solid #e8b4b4;
+      border-radius: 6px;
+      font-size: .8rem;
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: background 150ms ease;
+    }
+    .btn-borrar-admin:hover { background: #f9d9d9; }
+
+    /* BOTÓN LOGOUT */
+    .btn-logout {
+      padding: .5rem 1rem;
+      background: transparent;
+      border: 1.5px solid var(--color-border);
+      border-radius: 8px;
+      font-size: .875rem;
+      font-family: var(--font-body);
+      cursor: pointer;
+      color: var(--color-muted);
+      transition: all 150ms ease;
+    }
+    .btn-logout:hover { border-color: var(--color-danger); color: var(--color-danger); }
+
+    /* ESTADO VACÍO */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--color-muted);
+      font-size: .9rem;
+    }
+
+    /* ALERTA */
+    .alert {
+      display: none;
+      padding: .75rem 1rem;
+      border-radius: 8px;
+      font-size: .875rem;
+      margin-bottom: 1rem;
+      border-left: 3px solid transparent;
+    }
+    .alert--error {
+      background: var(--color-danger-lt);
+      color: var(--color-danger);
+      border-left-color: var(--color-danger);
+    }
+    .alert[aria-live] { display: block; }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      .site-header { padding: 1rem; }
+      th:nth-child(4), td:nth-child(4) { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+    }
+
+    [hidden] { display: none !important; }
+  </style>
+</head>
+
+<body>
+
+  <header class="site-header" role="banner">
+    <div style="display:flex; align-items:center; gap:.875rem;">
+      <p class="site-header__logo">Clínica Belleza</p>
+      <span class="site-header__badge" aria-label="Modo administración">Admin</span>
+    </div>
+    <div class="header-right">
+      <p class="admin-email" id="admin-email" aria-live="polite"></p>
+      <button class="btn-logout" id="btnLogout" type="button">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main class="main-content" id="main-content">
+
+    <!-- ACCESO DENEGADO (mientras carga o si no es admin) -->
+    <div id="seccion-acceso-denegado" hidden>
+      <div class="card" style="text-align:center; padding: 3rem;">
+        <p style="font-size:1.1rem; color: var(--color-danger); margin-bottom:.5rem;">Acceso denegado</p>
+        <p style="color:var(--color-muted); font-size:.9rem;">No tienes permisos para ver esta página.</p>
+      </div>
+    </div>
+
+    <!-- PANEL ADMIN -->
+    <div id="seccion-admin" hidden>
+
+      <!-- STATS -->
+      <div class="stats-grid" aria-label="Resumen de reservas">
+        <div class="stat-card">
+          <p class="stat-card__numero" id="stat-total">—</p>
+          <p class="stat-card__label">Reservas totales</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-card__numero" id="stat-hoy">—</p>
+          <p class="stat-card__label">Citas hoy</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-card__numero" id="stat-semana">—</p>
+          <p class="stat-card__label">Esta semana</p>
+        </div>
+      </div>
+
+      <!-- TABLA -->
+      <section class="card" aria-labelledby="tabla-titulo">
+        <div class="card__header">
+          <h1 id="tabla-titulo" class="card__title">Todas las reservas</h1>
+          <div class="filtro-group" role="group" aria-label="Filtrar reservas">
+            <button class="filtro-btn activo" data-filtro="todas" type="button">Todas</button>
+            <button class="filtro-btn" data-filtro="hoy" type="button">Hoy</button>
+            <button class="filtro-btn" data-filtro="semana" type="button">Esta semana</button>
+          </div>
+        </div>
+
+        <div
+          id="alerta-admin"
+          class="alert"
+          role="alert"
+          aria-live="polite"
+          aria-atomic="true"
+        ></div>
+
+        <div class="tabla-wrapper">
+          <table aria-label="Lista de reservas de todos los clientes">
+            <thead>
+              <tr>
+                <th scope="col">Fecha y hora</th>
+                <th scope="col">Cliente</th>
+                <th scope="col">Servicio</th>
+                <th scope="col">Email</th>
+                <th scope="col">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-body">
+              <tr>
+                <td colspan="5" class="empty-state">Cargando reservas…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script type="module" src="admin.js"></script>
+</body>
+</html>
