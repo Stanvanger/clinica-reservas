@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sistema de reservas online para Clínica Belleza. Reserva tu cita de estética fácil y rápido." />
+  <title>Clínica Belleza — Reservas Online</title>
+
+  <!-- Google Fonts: Cormorant (display elegante) + Inter (cuerpo limpio) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── TOKENS ─────────────────────────────────────────────── */
+    :root {
+      --color-bg:        #faf8f5;
+      --color-surface:   #ffffff;
+      --color-border:    #e8e0d6;
+      --color-accent:    #8b6f47;
+      --color-accent-lt: #f2ebe0;
+      --color-danger:    #a33b3b;
+      --color-danger-lt: #fdf0f0;
+      --color-success:   #2e6e4e;
+      --color-success-lt:#edf7f2;
+      --color-text:      #1a1714;
+      --color-muted:     #6b6560;
+
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body:    'Inter', system-ui, sans-serif;
+
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+
+      --shadow-card: 0 1px 4px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+      --transition:  150ms ease;
+    }
+
+    /* ─── RESET ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      background: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100svh;
+    }
+    img, svg { display: block; max-width: 100%; }
+    button, input, select { font: inherit; }
+
+    /* ─── ACCESIBILIDAD: foco visible ────────────────────────── */
+    :focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 3px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* ─── SKIP LINK ──────────────────────────────────────────── */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: 1rem;
+      background: var(--color-accent);
+      color: #fff;
+      padding: .5rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: .875rem;
+      font-weight: 600;
+      z-index: 999;
+      transition: top var(--transition);
+    }
+    .skip-link:focus { top: 1rem; }
+
+    /* ─── HEADER ─────────────────────────────────────────────── */
+    .site-header {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+    }
+    .site-header__logo {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      font-weight: 600;
+      letter-spacing: .04em;
+      color: var(--color-accent);
+      line-height: 1.2;
+    }
+    .site-header__tagline {
+      font-size: .8125rem;
+      color: var(--color-muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-top: .25rem;
+    }
+
+    /* ─── LAYOUT ─────────────────────────────────────────────── */
+    .main-content {
+      max-width: 480px;
+      margin: 2rem auto;
+      padding: 0 1rem 3rem;
+    }
+
+    /* ─── CARD ───────────────────────────────────────────────── */
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: clamp(1.25rem, 5vw, 2rem);
+      box-shadow: var(--shadow-card);
+      margin-bottom: 1.25rem;
+    }
+    .card__title {
+      font-family: var(--font-display);
+      font-size: 1.375rem;
+      font-weight: 600;
+      color: var(--color-accent);
+      margin-bottom: 1.25rem;
+    }
+
+    /* ─── FORMULARIOS ────────────────────────────────────────── */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: .375rem;
+      margin-bottom: .875rem;
+    }
+    .form-label {
+      font-size: .8125rem;
+      font-weight: 500;
+      color: var(--color-muted);
+      letter-spacing: .03em;
+    }
+    .form-control {
+      width: 100%;
+      padding: .625rem .875rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-size: .9375rem;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .form-control:hover { border-color: #c5b89f; }
+    .form-control:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(139,111,71,.15);
+      outline: none;
+    }
+    select.form-control {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6560' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right .875rem center;
+      padding-right: 2.5rem;
+    }
+
+    /* ─── BOTONES ────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      width: 100%;
+      padding: .75rem 1.25rem;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: .9375rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition), opacity var(--transition);
+      margin-bottom: .625rem;
+    }
+    .btn:active { transform: scale(.98); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; }
+
+    .btn--primary { background: var(--color-accent); color: #fff; }
+    .btn--primary:hover:not(:disabled) { background: #7a6040; }
+
+    .btn--ghost {
+      background: transparent;
+      color: var(--color-accent);
+      border: 1.5px solid var(--color-accent);
+    }
+    .btn--ghost:hover:not(:disabled) { background: var(--color-accent-lt); }
+
+    .btn--danger { background: var(--color-danger); color: #fff; }
+    .btn--danger:hover:not(:disabled) { background: #8a3030; }
+
+    .btn--sm {
+      width: auto;
+      padding: .375rem .875rem;
+      font-size: .8125rem;
+      margin-bottom: 0;
+    }
+
+    /* ─── SESIÓN INFO ────────────────────────────────────────── */
+    .session-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .375rem;
+      font-size: .8125rem;
+      color: var(--color-muted);
+      background: var(--color-accent-lt);
+      border-radius: 99px;
+      padding: .3rem .875rem;
+      margin-bottom: 1.25rem;
+    }
+    .session-badge::before {
+      content: '';
+      display: block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--color-success);
+      flex-shrink: 0;
+    }
+
+    /* ─── ALERTAS ────────────────────────────────────────────── */
+    .alert {
+      display: none;
+      padding: .75rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: .875rem;
+      margin-bottom: 1rem;
+      border-left: 3px solid transparent;
+    }
+    .alert--ok {
+      background: var(--color-success-lt);
+      color: var(--color-success);
+      border-left-color: var(--color-success);
+    }
+    .alert--error {
+      background: var(--color-danger-lt);
+      color: var(--color-danger);
+      border-left-color: var(--color-danger);
+    }
+    .alert[aria-live] { display: block; }
+
+    /* ─── LISTA DE RESERVAS ──────────────────────────────────── */
+    .reservas-list {
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      list-style: none;
+    }
+    .reserva-item {
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.125rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: start;
+      gap: .5rem;
+    }
+    .reserva-item__fecha {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-accent);
+    }
+    .reserva-item__servicio {
+      font-size: .9375rem;
+      font-weight: 500;
+      margin: .125rem 0;
+    }
+    .reserva-item__nombre {
+      font-size: .8125rem;
+      color: var(--color-muted);
+    }
+
+    /* ─── ESTADO VACÍO ───────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--color-muted);
+      font-size: .9rem;
+    }
+    .empty-state p:first-child { font-size: 2rem; margin-bottom: .5rem; }
+
+    /* ─── DIVIDER ────────────────────────────────────────────── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin: .875rem 0;
+      color: var(--color-muted);
+      font-size: .8125rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-border);
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .main-content { margin-top: 1.25rem; }
+      .reserva-item {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ─── MOTION REDUCIDO ────────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+    }
+
+    /* ─── SECCIONES OCULTAS ──────────────────────────────────── */
+    [hidden] { display: none !important; }
+  </style>
+</head>
+
+<body>
+
+  <!-- Skip link para teclado y lectores de pantalla -->
+  <a class="skip-link" href="#main-content">Ir al contenido principal</a>
+
+  <!-- CABECERA -->
+  <header class="site-header" role="banner">
+    <p class="site-header__logo" aria-label="Clínica Belleza">Clínica Belleza</p>
+    <p class="site-header__tagline" aria-hidden="true">Reservas online</p>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main id="main-content" class="main-content">
+
+    <!-- ── SECCIÓN AUTH ── -->
+    <section
+      id="seccion-auth"
+      class="card"
+      aria-labelledby="auth-titulo"
+    >
+      <h1 id="auth-titulo" class="card__title">Accede a tu cuenta</h1>
+
+      <div
+        id="alerta-auth"
+        class="alert"
+        role="alert"
+        aria-live="polite"
+        aria-atomic="true"
+      ></div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Correo electrónico</label>
+        <input
+          class="form-control"
+          type="email"
+          id="email"
+          name="email"
+          placeholder="tu@correo.com"
+          autocomplete="email"
+          required
+          aria-required="true"
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Contraseña</label>
+        <input
+          class="form-control"
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Mínimo 6 caracteres"
+          autocomplete="current-password"
+          required
+          aria-required="true"
+          minlength="6"
+        />
+      </div>
+
+      <button class="btn btn--primary" id="btnLogin" type="button">
+        Iniciar sesión
+      </button>
+
+      <div class="divider" aria-hidden="true">o</div>
+
+      <button class="btn btn--ghost" id="btnRegistrar" type="button">
+        Crear cuenta nueva
+      </button>
+    </section>
+
+    <!-- ── SECCIÓN RESERVA ── -->
+    <section
+      id="seccion-reserva"
+      class="card"
+      aria-labelledby="reserva-titulo"
+      hidden
+    >
+      <h1 id="reserva-titulo" class="card__title">Nueva reserva</h1>
+
+      <p id="sesion-info" class="session-badge" aria-live="polite"></p>
+
+      <div
+        id="alerta-reserva"
+        class="alert"
+        role="alert"
+        aria-live="polite"
+        aria-atomic="true"
+      ></div>
+
+      <form id="form-reserva" novalidate>
+
+        <div class="form-group">
+          <label class="form-label" for="nombre">Nombre completo</label>
+          <input
+            class="form-control"
+            type="text"
+            id="nombre"
+            name="nombre"
+            placeholder="Carolina Quintero"
+            autocomplete="name"
+            required
+            aria-required="true"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="servicio">Servicio</label>
+          <select
+            class="form-control"
+            id="servicio"
+            name="servicio"
+            required
+            aria-required="true"
+          >
+            <option value="" disabled selected>Elige un servicio</option>
+            <option value="Limpieza facial">Limpieza facial</option>
+            <option value="Microblading">Microblading</option>
+            <option value="Masaje relajante">Masaje relajante</option>
+            <option value="Manicura">Manicura</option>
+            <option value="Depilación láser">Depilación láser</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fecha">Fecha</label>
+          <input
+            class="form-control"
+            type="date"
+            id="fecha"
+            name="fecha"
+            required
+            aria-required="true"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="hora">Hora</label>
+          <select
+            class="form-control"
+            id="hora"
+            name="hora"
+            required
+            aria-required="true"
+          >
+            <option value="" disabled selected>Elige una hora</option>
+            <option value="09:00">09:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:00">11:00</option>
+            <option value="12:00">12:00</option>
+            <option value="16:00">16:00</option>
+            <option value="17:00">17:00</option>
+            <option value="18:00">18:00</option>
+          </select>
+        </div>
+
+        <button class="btn btn--primary" type="submit" id="btnReservar">
+          Confirmar reserva
+        </button>
+
+      </form>
+
+      <button class="btn btn--danger" id="btnLogout" type="button">
+        Cerrar sesión
+      </button>
+    </section>
+
+    <!-- ── SECCIÓN LISTA ── -->
+    <section
+      id="seccion-lista"
+      class="card"
+      aria-labelledby="lista-titulo"
+      aria-live="polite"
+      hidden
+    >
+      <h2 id="lista-titulo" class="card__title">Mis reservas</h2>
+      <ul
+        id="lista-reservas"
+        class="reservas-list"
+        aria-label="Lista de tus reservas"
+      ></ul>
+    </section>
+
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
